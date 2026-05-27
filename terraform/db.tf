@@ -25,7 +25,7 @@ resource "aws_rds_cluster" "jf_com_main_site_db" {
   manage_master_user_password = true
   skip_final_snapshot = var.jf_com_environment == "production" ? false : true
   db_subnet_group_name = aws_db_subnet_group.jf_com_db.name
-  vpc_security_group_ids = [] # @TODO: Fill these in during wiring
+  vpc_security_group_ids = [aws_security_group.jf_com_db_sg.id]
 
   serverlessv2_scaling_configuration {
     # This is what actually shuts off the database when there's no traffic, so we don't end up with aurora costs

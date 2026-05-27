@@ -19,7 +19,7 @@ resource "aws_lambda_function" "jf_com_main_site" {
 
   vpc_config {
     subnet_ids         = [aws_subnet.jf_com_private_1.id, aws_subnet.jf_com_private_2.id]
-    security_group_ids = [] # @TODO: Add security group during wiring
+    security_group_ids = [aws_security_group.jf_com_lambda_sg.id]
   }
 
   environment {
