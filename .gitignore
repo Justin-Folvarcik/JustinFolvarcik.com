@@ -1,0 +1,17 @@
+# IDE files
+.idea
+.DS_Store
+
+# Terraform
+.tfstate*
+.terraform
+.tfvars
+
+# Python/Django
+**/__pycache__
+*.pyc
+/staticfiles/
+/.venv/
+
+# Sensitive
+.env
