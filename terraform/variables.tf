@@ -21,8 +21,14 @@ variable "jf_com_region" {
   default = "us-east-1"
 }
 
-# Our actual sign-in profile @TODO: put in .tfvars
+# Our actual sign-in profile
 variable "jf_com_aws_profile" {
   type = string
   description = "The AWS profile to use to sign in."
+}
+
+# This will be for generating a random tag for the image based on git SHA
+variable "jf_com_tag_random" {
+  type = string
+  description = "The git SHA to append to the image tag."
 }
