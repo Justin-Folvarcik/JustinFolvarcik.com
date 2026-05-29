@@ -11,7 +11,7 @@ resource "aws_lambda_function" "jf_com_main_site" {
   # Safeguard to prevent debug mode from being enabled in Production
   lifecycle {
     precondition {
-      condition = !(var.jf_com_debug == true && var.jf_com_environment == "Production")
+      condition = !(var.jf_com_debug && var.jf_com_environment == "Production")
       error_message = "Debug cannot be enabled in the Production Environment."
     }
   }
