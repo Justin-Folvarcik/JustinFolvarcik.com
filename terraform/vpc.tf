@@ -95,14 +95,6 @@ resource "aws_vpc_endpoint" "jf_com_assets_endpoint" {
 resource "aws_security_group" "jf_com_db_sg" {
   vpc_id = aws_vpc.jf_com_vpc.id
 
-  # The database only needs ingress. Terraform removes the open egress rules by default.
-  ingress {
-    to_port = 5432
-    from_port = 5432
-    security_groups = [aws_security_group.jf_com_lambda_sg.id]
-    protocol = "tcp"
-  }
-
   tags = {
     Name = "jf_com_db_sg"
     Environment = var.jf_com_environment
@@ -112,23 +104,39 @@ resource "aws_security_group" "jf_com_db_sg" {
 resource "aws_security_group" "jf_com_lambda_sg" {
   vpc_id = aws_vpc.jf_com_vpc.id
 
-  # Needs egress to both Aurora and the assets S3 bucket.
-  egress {
-    to_port = 5432
-    from_port = 5432
-    security_groups = [aws_security_group.jf_com_db_sg.id]
-    protocol = "tcp"
-  }
-
-  egress {
-    to_port = 443
-    from_port = 443
-    prefix_list_ids = [aws_vpc_endpoint.jf_com_assets_endpoint.prefix_list_id]
-    protocol = "tcp"
-  }
-
   tags = {
     Name = "jf_com_lambda_sg"
     Environment = var.jf_com_environment
   }
+}
+
+# We don't need to set egress rules for the database; terraform removes the defaults so there are none
+resource "aws_security_group_rule" "jf_com_db_sg_ingress" {
+  description = "Allow connection to Aurora"
+  from_port         = 5432
+  protocol          = "tcp"
+  security_group_id = aws_security_group.jf_com_db_sg.id
+  to_port           = 5432
+  type              = "ingress"
+  source_security_group_id = aws_security_group.jf_com_lambda_sg.id
+}
+
+resource "aws_security_group_rule" "jf_com_lambda_sg_egress_db" {
+  description = "Allow lambda to talk to Aurora"
+  from_port         = 5432
+  protocol          = "tcp"
+  security_group_id = aws_security_group.jf_com_lambda_sg.id
+  to_port           = 5432
+  type              = "egress"
+  source_security_group_id = aws_security_group.jf_com_db_sg.id
+}
+
+resource "aws_security_group_rule" "jf_com_lambda_sg_egress_assets" {
+  description = "Allow lambda to talk to S3"
+  from_port         = 443
+  protocol          = "tcp"
+  security_group_id = aws_security_group.jf_com_lambda_sg.id
+  prefix_list_ids = [aws_vpc_endpoint.jf_com_assets_endpoint.prefix_list_id]
+  to_port           = 443
+  type              = "egress"
 }
