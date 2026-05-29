@@ -15,11 +15,11 @@ resource "aws_db_subnet_group" "jf_com_db" {
 
 # Then we define the actual DB cluster
 resource "aws_rds_cluster" "jf_com_main_site_db" {
-  cluster_identifier = "jf_com_main_site_cluster"
+  # The identifier does not allow underscores
+  cluster_identifier = "jf-com-main-site-cluster"
   engine = "aurora-postgresql"
   engine_mode = "provisioned"
   engine_version = "16.13"
-  availability_zones = ["${var.jf_com_region}a", "${var.jf_com_region}b"]
   database_name = "jf_com_main_site"
   master_username = "dbadmin"
   manage_master_user_password = true
@@ -36,7 +36,8 @@ resource "aws_rds_cluster" "jf_com_main_site_db" {
 
 # Now instances within said cluster
 resource "aws_rds_cluster_instance" "jf_com_main_site_production" {
-  identifier = "jf_com_main_site_production_1"
+  # No underscores allowed in the identifier
+  identifier = "jf-com-main-site-production-1"
   cluster_identifier = aws_rds_cluster.jf_com_main_site_db.id
   engine             = aws_rds_cluster.jf_com_main_site_db.engine
   engine_version     = aws_rds_cluster.jf_com_main_site_db.engine_version
