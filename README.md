@@ -26,9 +26,7 @@ root -
 ```
 
 ## Where is the project so far?
-I spent extensive time learning terraform and configuring my infrastructure definitions. While these aren't yet complete, I'm rapidly approaching a working infrastructure to start hosting my code.
-
-My resources have been properly defined in my terraform directory, and all that remains is to wire the services together and finish variable injection.
+The Terraform configuration is complete (or at least as complete as it needs to be at the moment). Now, it's time to begin work on Django itself.
 
 ## What is the end goal?
 A site all my own, of course! Writing code is enjoyable to me, as is maintaining infrastructure. Being able to combine the two is an exciting experience, and that alone makes it worth it.
