@@ -15,6 +15,13 @@ variable "jf_com_environment" {
   default = "Development"
 }
 
+# This is separated from environment to make local debugging easier
+variable "jf_com_debug" {
+  type = bool
+  description = "Whether or not to enable debug functionality"
+  default = false
+}
+
 variable "jf_com_region" {
   type = string
   description = "The AWS region to use"

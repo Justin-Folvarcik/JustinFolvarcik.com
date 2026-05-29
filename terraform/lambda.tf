@@ -28,7 +28,8 @@ resource "aws_lambda_function" "jf_com_main_site" {
       JF_COM_DB_PASS           = jsondecode(data.aws_secretsmanager_secret_version.jf_com_db_password.secret_string)["password"]
       JF_COM_DB_HOST           = aws_rds_cluster.jf_com_main_site_db.endpoint
       JF_COM_DB_NAME           = aws_rds_cluster.jf_com_main_site_db.database_name
-      JF_COM_DEBUG             = lower(var.jf_com_environment) == "production" ? "False" : "True"
+      JF_COM_ENVIRONMENT       = low(var.jf_com_environment) == "production" ? "Production" : "Development"
+      JF_COM_DEBUG             = var.jf_com_debug
     }
   }
 }
