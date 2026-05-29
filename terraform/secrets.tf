@@ -21,7 +21,7 @@ resource "aws_secretsmanager_secret" "jf_com_django_secret_key" {
   }
 }
 
-# Attach the actual key to the container so it can be referenced at runtime
+# Attach the actual key to the container so it can be referenced at deployment
 resource "aws_secretsmanager_secret_version" "jf_com_django_secret_key_version" {
   secret_id = aws_secretsmanager_secret.jf_com_django_secret_key.id
   secret_string = random_password.jf_com_django_key.result
