@@ -33,11 +33,14 @@ resource "aws_lambda_function" "jf_com_main_site" {
   environment {
     variables = {
       JF_COM_DJANGO_SECRET_KEY = aws_secretsmanager_secret_version.jf_com_django_secret_key_version.secret_string
+      JF_COM_DB_USER           = aws_rds_cluster.jf_com_main_site_db.master_username
       JF_COM_DB_PASS           = jsondecode(data.aws_secretsmanager_secret_version.jf_com_db_password.secret_string)["password"]
       JF_COM_DB_HOST           = aws_rds_cluster.jf_com_main_site_db.endpoint
       JF_COM_DB_NAME           = aws_rds_cluster.jf_com_main_site_db.database_name
       JF_COM_ENVIRONMENT       = low(var.jf_com_environment) == "production" ? "Production" : "Development"
       JF_COM_DEBUG             = var.jf_com_debug
+      JF_COM_REGION            = var.jf_com_region
+      JF_COM_ASSETS_BUCKET     = aws_s3_bucket.jf_com_assets.bucket
     }
   }
 }
