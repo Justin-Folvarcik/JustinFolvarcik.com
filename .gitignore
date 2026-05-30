@@ -3,9 +3,10 @@
 .DS_Store
 
 # Terraform
-.tfstate*
+*.tfstate
+*.tfstate.*
 .terraform
-.tfvars
+*.tfvars
 
 # Python/Django
 **/__pycache__
