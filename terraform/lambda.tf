@@ -41,6 +41,7 @@ resource "aws_lambda_function" "jf_com_main_site" {
       JF_COM_DEBUG             = var.jf_com_debug
       JF_COM_REGION            = var.jf_com_region
       JF_COM_ASSETS_BUCKET     = aws_s3_bucket.jf_com_assets.bucket
+      JF_COM_FUNCTION_URL      = aws_lambda_function_url.jf_com_main_site_url.function_url
     }
   }
 }
