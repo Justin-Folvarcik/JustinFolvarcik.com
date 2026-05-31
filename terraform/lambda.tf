@@ -7,6 +7,9 @@ data "aws_secretsmanager_secret_version" "jf_com_db_password" {
   secret_id = aws_rds_cluster.jf_com_main_site_db.master_user_secret[0].secret_arn
 }
 
+# This is to help restrict function invocation for maintenance commands
+data "aws_caller_identity" "jf_com_function_caller" {}
+
 resource "aws_lambda_function" "jf_com_main_site" {
   # Safeguard to prevent debug mode from being enabled in Production
   lifecycle {
@@ -37,7 +40,7 @@ resource "aws_lambda_function" "jf_com_main_site" {
       JF_COM_DB_PASS           = jsondecode(data.aws_secretsmanager_secret_version.jf_com_db_password.secret_string)["password"]
       JF_COM_DB_HOST           = aws_rds_cluster.jf_com_main_site_db.endpoint
       JF_COM_DB_NAME           = aws_rds_cluster.jf_com_main_site_db.database_name
-      JF_COM_ENVIRONMENT       = low(var.jf_com_environment) == "production" ? "Production" : "Development"
+      JF_COM_ENVIRONMENT       = lower(var.jf_com_environment) == "production" ? "Production" : "Development"
       JF_COM_DEBUG             = var.jf_com_debug
       JF_COM_REGION            = var.jf_com_region
       JF_COM_ASSETS_BUCKET     = aws_s3_bucket.jf_com_assets.bucket
@@ -74,10 +77,10 @@ resource "aws_lambda_permission" "jf_com_lambda_permissions_url" {
 }
 
 # Allowing URL access and function invocation access are two separate things
-# Both required for this application
+# This is restricted to account only so that management commands can't be run by just anyone
 resource "aws_lambda_permission" "jf_com_lambda_permissions_function" {
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.jf_com_main_site.function_name
-  principal     = "*"
-  statement_id  = "AllowPublicInvoke"
+  principal     = "arn:aws:iam::${data.aws_caller_identity.jf_com_function_caller.account_id}:root"
+  statement_id  = "AllowAccountInvoke"
 }
